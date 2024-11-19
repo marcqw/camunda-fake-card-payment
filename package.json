@@ -4,7 +4,7 @@
   "description": "",
   "main": "cardPayment.js",
   "scripts": {
-    "run": "node cardPayment.js"
+    "dev": "node cardPayment.js"
   },
   "type": "module",
   "author": "William Marcq",
