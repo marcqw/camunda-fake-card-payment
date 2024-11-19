@@ -2,11 +2,12 @@
   "name": "camunda-fake-card-payment",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "cardPayment.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "run": "node cardPayment.js"
   },
-  "author": "",
+  "type": "module",
+  "author": "William Marcq",
   "license": "ISC",
   "dependencies": {
     "@camunda8/sdk": "^8.6.16",
