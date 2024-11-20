@@ -4,6 +4,9 @@ import 'dotenv/config';
 const c8 = new Camunda8();
 const zeebe = c8.getZeebeGrpcApiClient();
 
+
+console.log("Starting worker...");
+
 zeebe.createWorker({
   taskType: "card-payment",
   taskHandler: (job) => {
@@ -13,8 +16,13 @@ zeebe.createWorker({
 
     switch (job.variables.cardHolderName) {
       case "Jordan":
-        resultStatus = "refused";
-        resultMessage = "Payment refused. Please contact your bank.";
+        resultStatus = "declined";
+        resultMessage = "Transaction denied.";
+        break;
+
+      case "Aurel":
+        resultStatus = "limit_exceeded";
+        resultMessage = "Card limit exceeded.";
         break;
 
       case "Ragnar":
@@ -23,8 +31,8 @@ zeebe.createWorker({
         break;
 
       case "William":
-        resultStatus = "success";
-        resultMessage = "Payment successful. Thank you!";
+        resultStatus = "approved";
+        resultMessage = "Transaction successful.";
         break;
 
       default:
@@ -33,9 +41,23 @@ zeebe.createWorker({
         break;
     }
 
-    return job.complete({
+    if (resultStatus === "approved") {
+      return job.complete({
         resultStatus: resultStatus,
         resultMessage: resultMessage
-    });
+      });
+    } else if (resultStatus === "declined") {
+      return job.error({
+        errorCode: "CARD_PAYMENT_FAILED",
+        resultStatus: resultStatus,
+        resultMessage: resultMessage
+      });
+    } else if (resultStatus === "limit_exceeded") {
+      return job.error({
+        errorCode: "CARD_PAYMENT_FAILED",
+        resultStatus: resultStatus,
+        resultMessage: resultMessage
+      });
+    } 
   },
 });
